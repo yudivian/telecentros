@@ -1,2 +1,2 @@
 # telecentros
-Dashboar for Telecenters Analysis
+Dashboard for Telecenters Analysis
