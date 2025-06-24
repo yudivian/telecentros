@@ -1,7 +1,10 @@
 import streamlit as st
 
-dashboard_page = st.Page("dashboard.py", title="Dashboard", icon=":material/dashboard:", default=True)
-explorer_page = st.Page("explorer.py", title="Explorador", icon=":material/search:")
+explorer_page = st.Page(
+    "explorer.py", title="Explorador", icon=":material/search:", default=True
+)
+dashboard_page = st.Page("dashboard.py", title="Análisis", icon=":material/dashboard:")
 
-pg = st.navigation([dashboard_page, explorer_page])
+
+pg = st.navigation([explorer_page, dashboard_page])
 pg.run()

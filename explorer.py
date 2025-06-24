@@ -1,15 +1,17 @@
 import streamlit as st
 import json
 import unicodedata
-from datetime import datetime , timedelta
+from datetime import datetime, timedelta
 
 
 st.title("Telecentros  - Explorador")
 
+
 def normalize(text):
-    t = unicodedata.normalize('NFD', text)
-    t = ''.join(c for c in t if unicodedata.category(c) != 'Mn')
+    t = unicodedata.normalize("NFD", text)
+    t = "".join(c for c in t if unicodedata.category(c) != "Mn")
     return t.lower()
+
 
 files = {
     "pr": "tele-pinar-v2-llama.json",
@@ -72,9 +74,9 @@ with st.container(border=True):
     ndata = {}
     if selected_keys:
         if not ("Todos" in selected_keys):
-            for k,p in data.items():
+            for k, p in data.items():
                 if p["tc"] in [tc[i] for i in selected_keys]:
-                    ndata[k]=p
+                    ndata[k] = p
         else:
             ndata = data
         dates = []
@@ -87,13 +89,17 @@ with st.container(border=True):
             "Selecciona el rango de fechas:",
             min_value=start_date,
             max_value=end_date,
-            value=(start_date, end_date),  
-            step=timedelta(days=1),  
-            format="YYYY-MM-DD"  
+            value=(start_date, end_date),
+            step=timedelta(days=1),
+            format="YYYY-MM-DD",
         )
         start = selected_date_range[0]
         end = selected_date_range[-1]
-        ndata = {k:p for k,p in ndata.items() if start <= datetime.fromisoformat(p["date"]) <= end}
+        ndata = {
+            k: p
+            for k, p in ndata.items()
+            if start <= datetime.fromisoformat(p["date"]) <= end
+        }
         vis = [i["views"] for i in ndata.values()]
         minvis = min(vis)
         maxvis = max(vis)
@@ -101,10 +107,12 @@ with st.container(border=True):
             "Selecciona el rango de visualizaciones:",
             min_value=minvis,
             max_value=maxvis,
-            value=(minvis, maxvis),  
-            step=1
+            value=(minvis, maxvis),
+            step=1,
         )
-        ndata = {k:p for k,p in ndata.items() if vis_range[0] <= p["views"] <= vis_range[1]}
+        ndata = {
+            k: p for k, p in ndata.items() if vis_range[0] <= p["views"] <= vis_range[1]
+        }
         dur = [i["duration"] for i in ndata.values()]
         mindur = min(dur)
         maxdur = max(dur)
@@ -112,36 +120,40 @@ with st.container(border=True):
             "Selecciona el rango de visualizaciones:",
             min_value=mindur,
             max_value=maxdur,
-            value=(mindur, maxdur),  
-            step=1
+            value=(mindur, maxdur),
+            step=1,
         )
-        ndata = {k:p for k,p in ndata.items() if dur_range[0] <= p["duration"] <= dur_range[1]} 
+        ndata = {
+            k: p
+            for k, p in ndata.items()
+            if dur_range[0] <= p["duration"] <= dur_range[1]
+        }
         st.divider()
         hcol1, hcol2 = st.columns(2)
         with hcol1:
-            st.markdown("Resultados: "+str(len(ndata)))
+            st.markdown("Resultados: " + str(len(ndata)))
         with hcol2:
             filter = st.text_input("Filtrar:")
             if filter:
                 filter_norm = normalize(filter)
                 fdata = {}
-                for k,p in ndata.items():
-                    for d in ["title","snippet","transcript"]:
-                        if (d in p) and p[d]!=None:
+                for k, p in ndata.items():
+                    for d in ["title", "snippet", "transcript"]:
+                        if (d in p) and p[d] != None:
                             if filter_norm in normalize(p[d]):
-                                fdata[k]=p
+                                fdata[k] = p
                                 break
                 ndata = fdata
-        rtc = {p:k for k,p in tc.items() if k!="Todos"}
+        rtc = {p: k for k, p in tc.items() if k != "Todos"}
         for p in ndata.values():
             with st.expander(p["title"]):
                 col1, col2, col3 = st.columns(3)
                 with col1:
                     st.markdown(rtc[p["tc"]])
                 with col2:
-                    st.markdown("Vistas: "+str(p["views"]))
+                    st.markdown("Vistas: " + str(p["views"]))
                 with col3:
-                    st.markdown("Duración: "+str(p["duration"]))
+                    st.markdown("Duración: " + str(p["duration"]))
                 st.video(p["link"])
                 st.markdown("**Lead:**")
                 st.markdown(p["snippet"])
