@@ -11,10 +11,6 @@ def normalize(text):
     t = ''.join(c for c in t if unicodedata.category(c) != 'Mn')
     return t.lower()
 
-with open("stopwords-es.json", "r") as jfile:
-    swes = json.load(jfile)
-    stopwords_es = set(swes)
-
 files = {
     "pr": "tele-pinar-v2-llama.json",
     "ar": "artv-v2-llama.json",
@@ -146,6 +142,7 @@ with st.container(border=True):
                     st.markdown("Vistas: "+str(p["views"]))
                 with col3:
                     st.markdown("Duración: "+str(p["duration"]))
+                st.video(p["link"])
                 st.markdown("**Lead:**")
                 st.markdown(p["snippet"])
                 if p["transcript"]:

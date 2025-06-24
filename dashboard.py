@@ -5,7 +5,6 @@ import calendar
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 import string
-import nltk
 import plotly.graph_objects as go
 from datetime import datetime , timedelta
 
