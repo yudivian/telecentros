@@ -125,7 +125,7 @@ def get_number_date(numday):
     return str(date.day)+"/"+str(date.month)
 
 with st.container(border=True):
-    st.markdown("**Número de programas**")
+    st.markdown("**Número de videos**")
     selected_keys = st.multiselect(
         "Seleciona los telecentros a analizar:",
         list(tc.keys()),
@@ -159,8 +159,8 @@ with st.container(border=True):
         subcat = ["MA", "No MA"]
         subcat_vals = {x: [] for x in subcat}
         for c in selected_keys:
-            ma_items = len([ i for i in data[tc[c]] if i["check"] and (start < datetime.fromisoformat(i["date"]) < end)])
-            nma_items = len([ i for i in data[tc[c]] if (not i["check"]) and (start < datetime.fromisoformat(i["date"]) < end)])
+            ma_items = len([ i for i in data[tc[c]] if i["check"] and (start <= datetime.fromisoformat(i["date"]) <= end)])
+            nma_items = len([ i for i in data[tc[c]] if (not i["check"]) and (start <= datetime.fromisoformat(i["date"]) <= end)])
             if selected_type=="Porciento":
                 ma_items = round(ma_items*100/(ma_items+nma_items),2)
                 nma_items = 100 - ma_items 
@@ -187,7 +187,7 @@ with st.container(border=True):
         st.plotly_chart(fig, use_container_width=True)
 
 with st.container(border=True):
-    st.markdown("**Duración total de los programas**")
+    st.markdown("**Duración total de los videos**")
     selected_keys = st.multiselect(
         "Seleciona los telecentros a analizar:",
         list(tc.keys()),
@@ -225,9 +225,9 @@ with st.container(border=True):
                 d = data[tc[c]]
                 item_all = [i for i in d if (start < datetime.fromisoformat(i["date"]) < end)]
                 st_all = stats(item_all,"duration")["sum"]
-                item_ma = [i for i in d if i["check"] and (start < datetime.fromisoformat(i["date"]) < end)]
+                item_ma = [i for i in d if i["check"] and (start <= datetime.fromisoformat(i["date"]) <= end)]
                 st_ma = stats(item_ma,"duration")["sum"]
-                item_nma = [i for i in d if not i["check"] and (start < datetime.fromisoformat(i["date"]) < end)]
+                item_nma = [i for i in d if not i["check"] and (start <= datetime.fromisoformat(i["date"]) <= end)]
                 st_nma = stats(item_nma,"duration")["sum"]
                 if selected_type=="Porciento":
                     st_ma = round(st_ma*100/st_all,2)
@@ -257,7 +257,7 @@ with st.container(border=True):
             st.plotly_chart(fig, use_container_width=True)
  
 with st.container(border=True):
-    st.markdown("**Duración promedio de los programas**")
+    st.markdown("**Duración promedio de los videos**")
     selected_keys = st.multiselect(
         "Seleciona los telecentros a analizar:",
         list(tc.keys()),
@@ -294,9 +294,9 @@ with st.container(border=True):
             subcat_vals = {x: [] for x in subcat}
             for c in categories:
                 d = data[tc[c]]
-                st_all = stats([i for i in d if (start < datetime.fromisoformat(i["date"]) < end)], "duration")
-                st_ma = stats([i for i in d if i["check"] and (start < datetime.fromisoformat(i["date"]) < end)], "duration")
-                st_nma = stats([i for i in d if not i["check"] and (start < datetime.fromisoformat(i["date"]) < end)], "duration")
+                st_all = stats([i for i in d if (start <= datetime.fromisoformat(i["date"]) <= end)], "duration")
+                st_ma = stats([i for i in d if i["check"] and (start <= datetime.fromisoformat(i["date"]) <= end)], "duration")
+                st_nma = stats([i for i in d if not i["check"] and (start <= datetime.fromisoformat(i["date"]) <= end)], "duration")
                 subcat_vals["Todos"].append(round(st_all[s_stat]))
                 subcat_vals["MA"].append(round(st_ma[s_stat]))
                 subcat_vals["No MA"].append(round(st_nma[s_stat]))
@@ -323,7 +323,7 @@ with st.container(border=True):
             st.plotly_chart(fig, use_container_width=True)
 
 with st.container(border=True):
-    st.markdown("**Visualizaciones de los programas**")
+    st.markdown("**Visualizaciones de los videos**")
     selected_keys = st.multiselect(
         "Seleciona los telecentros a analizar:", list(tc.keys()),key="likes_multselect",
     )
@@ -356,9 +356,9 @@ with st.container(border=True):
             subcat_vals = {x: [] for x in subcat}
             for c in categories:
                 d = data[tc[c]]
-                st_all = stats([i for i in d if (start < datetime.fromisoformat(i["date"]) < end)], "views")
-                st_ma = stats([i for i in d if i["check"] and (start < datetime.fromisoformat(i["date"]) < end)], "views")
-                st_nma = stats([i for i in d if not i["check"] and (start < datetime.fromisoformat(i["date"]) < end)], "views")
+                st_all = stats([i for i in d if (start <= datetime.fromisoformat(i["date"]) <= end)], "views")
+                st_ma = stats([i for i in d if i["check"] and (start <= datetime.fromisoformat(i["date"]) <= end)], "views")
+                st_nma = stats([i for i in d if not i["check"] and (start <= datetime.fromisoformat(i["date"]) <= end)], "views")
                 subcat_vals["Todos"].append(round(st_all[s_stat]))
                 subcat_vals["MA"].append(round(st_ma[s_stat]))
                 subcat_vals["No MA"].append(round(st_nma[s_stat]))
@@ -385,7 +385,7 @@ with st.container(border=True):
             st.plotly_chart(fig2, use_container_width=True)
             
 with st.container(border=True):
-    st.markdown("**Distribución por día de la semana**")
+    st.markdown("**Distribución de los videos por día de la semana**")
     selected_keys = st.multiselect(
         "Seleciona los telecentros a analizar:",
         list(tc.keys()),
@@ -416,7 +416,7 @@ with st.container(border=True):
         for c in categories:
                 days[c] = {"Lunes":0, "Martes":0, "Miercoles":0, "Jueves":0, "Viernes":0, "Sábado":0, "Domingo":0}
                 d = data[tc[c]]
-                lp = [i for i in d if i["check"] and (start < datetime.fromisoformat(i["date"]) < end)]
+                lp = [i for i in d if i["check"] and (start <= datetime.fromisoformat(i["date"]) <= end)]
                 for p in lp:
                     index_day = datetime.fromisoformat(p["date"]).weekday()
                     days[c][week_days[index_day]] +=1 
@@ -455,7 +455,7 @@ with st.container(border=True):
         st.plotly_chart(fig, use_container_width=True)
 
 with st.container(border=True):
-    st.markdown("**Distribución por día del año**")
+    st.markdown("**Distribución de los videos por día del año**")
     s_key = st.selectbox(
         "Seleciona el telecentro a analizar:",
         list(tc.keys()),
@@ -481,7 +481,7 @@ with st.container(border=True):
         end = selected_date_range[-1]
         ma_ydays = {i:0 for i in range(1,367)}
         d = data[tc[s_key]]
-        lp = [i for i in d if i["check"] and (start < datetime.fromisoformat(i["date"]) < end)]
+        lp = [i for i in d if i["check"] and (start <= datetime.fromisoformat(i["date"]) <= end)]
         for p in lp:
             index_day = get_date_number(p["date"])
             ma_ydays[index_day] +=1 
@@ -509,7 +509,7 @@ with st.container(border=True):
         st.plotly_chart(fig, use_container_width=True)
 
 with st.container(border=True):
-    st.markdown("**Programas relativos a la celebración de un Día especial**")
+    st.markdown("**Videos relativos a la celebración de un Día especial**")
     selected_keys = st.multiselect(
         "Seleciona los telecentros a analizar:",
         list(tc.keys()),
@@ -545,8 +545,8 @@ with st.container(border=True):
             subcat_vals = {x: [] for x in subcat}
             for c in categories:
                 d = data[tc[c]]
-                item_all = len([i for i in d if i["check"] and (start < datetime.fromisoformat(i["date"]) < end)])
-                item_day = len([i for i in d if i["check"] and i["day_celebration"] and (start < datetime.fromisoformat(i["date"]) < end)])
+                item_all = len([i for i in d if i["check"] and (start <= datetime.fromisoformat(i["date"]) <= end)])
+                item_day = len([i for i in d if i["check"] and i["day_celebration"] and (start <= datetime.fromisoformat(i["date"]) <= end)])
                 item_nday = item_all - item_day
                 if selected_type=="Porciento":
                     item_day = round(item_day*100/item_all,2)
@@ -577,7 +577,7 @@ with st.container(border=True):
                  
 
 with st.container(border=True):
-    st.markdown("**Nubes de etiquetas por telecentro**")
+    st.markdown("**Nubes de etiquetas del contenido de los videos por telecentro**")
     s_key = st.selectbox(
         "Seleciona el telecentro a analizar:",
         list(tc.keys()),
@@ -608,7 +608,7 @@ with st.container(border=True):
             key="wc_type select",
         )
         d = data[tc[s_key]]
-        lp = [i for i in d if i["check"] and (start < datetime.fromisoformat(i["date"]) < end)]
+        lp = [i for i in d if i["check"] and (start <= datetime.fromisoformat(i["date"]) <= end)]
         text = " "
         for p in lp:
             title = p["title"]

@@ -63,7 +63,7 @@ for key, filename in files.items():
                 data[i["link"]] = i
 
 with st.container(border=True):
-    st.markdown("**Explora los programas**")
+    st.markdown("**Explora los videos**")
     selected_keys = st.multiselect(
         "Seleciona los telecentros a analizar:",
         list(tc.keys()),
