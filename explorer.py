@@ -71,16 +71,16 @@ with st.container(border=True):
         list(tc.keys()),
         key="total_multiselect",
     )
-    ndata = {}
+    ldata = {}
     if selected_keys:
         if not ("Todos" in selected_keys):
             for k, p in data.items():
                 if p["tc"] in [tc[i] for i in selected_keys]:
-                    ndata[k] = p
+                    ldata[k] = p
         else:
-            ndata = data
+            ldata = data
         dates = []
-        for d in ndata.values():
+        for d in ldata.values():
             dates.append(d["date"])
         dates.sort()
         start_date = datetime.fromisoformat(dates[0])
@@ -97,10 +97,10 @@ with st.container(border=True):
         end = selected_date_range[-1]
         ndata = {
             k: p
-            for k, p in ndata.items()
+            for k, p in ldata.items()
             if start <= datetime.fromisoformat(p["date"]) <= end
         }
-        vis = [i["views"] for i in ndata.values()]
+        vis = [i["views"] for i in ldata.values()]
         minvis = min(vis)
         maxvis = max(vis)
         vis_range = st.slider(
@@ -109,11 +109,12 @@ with st.container(border=True):
             max_value=maxvis,
             value=(minvis, maxvis),
             step=1,
+            key="vis_slider"
         )
         ndata = {
             k: p for k, p in ndata.items() if vis_range[0] <= p["views"] <= vis_range[1]
         }
-        dur = [i["duration"] for i in ndata.values()]
+        dur = [i["duration"] for i in ldata.values()]
         mindur = min(dur)
         maxdur = max(dur)
         dur_range = st.slider(
@@ -122,6 +123,7 @@ with st.container(border=True):
             max_value=maxdur,
             value=(mindur, maxdur),
             step=1,
+            key="dur_slider"
         )
         ndata = {
             k: p
