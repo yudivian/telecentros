@@ -127,6 +127,9 @@ def get_number_date(numday):
     date = jan1 + timedelta(days=numday - 2)
     return str(date.day) + "/" + str(date.month)
 
+def get_period_date(strdate):
+    date = datetime.fromisoformat(strdate)
+    return str(date.day) + "/" + str(date.month)+"/"+str(date.year)
 
 with st.container(border=True):
     st.markdown("**Número de videos**")
@@ -500,6 +503,11 @@ with st.container(border=True):
             "Sábado",
             "Domingo",
         ]
+        selected_type = st.selectbox(
+            "Selecciona cual tipo de video mostrar:",
+            list(["Medio Ambiente", "No Medio Ambiente", "Todos"]),
+            key="wd_type_select",
+        )
         days = {}
         for c in categories:
             days[c] = {
@@ -512,11 +520,15 @@ with st.container(border=True):
                 "Domingo": 0,
             }
             d = data[tc[c]]
-            lp = [
-                i
-                for i in d
-                if i["check"] and (start <= datetime.fromisoformat(i["date"]) <= end)
-            ]
+            lp = []
+            for i in d:
+                check = True
+                if selected_type=="Medio Ambiente":
+                    check = i["check"]
+                elif selected_type=="No Medio Ambiente":
+                    check = not i["check"]
+                if check and (start <= datetime.fromisoformat(i["date"]) <= end):
+                    lp.append(i)
             for p in lp:
                 index_day = datetime.fromisoformat(p["date"]).weekday()
                 days[c][week_days[index_day]] += 1
@@ -576,11 +588,20 @@ with st.container(border=True):
         end = selected_date_range[-1]
         ma_ydays = {i: 0 for i in range(1, 367)}
         d = data[tc[s_key]]
-        lp = [
-            i
-            for i in d
-            if i["check"] and (start <= datetime.fromisoformat(i["date"]) <= end)
-        ]
+        selected_type = st.selectbox(
+            "Selecciona cual tipo de video mostrar:",
+            list(["Medio Ambiente", "No Medio Ambiente", "Todos"]),
+            key="yd_select",
+        )
+        lp = []
+        for i in d:
+            check = True
+            if selected_type=="Medio Ambiente":
+                check = i["check"]
+            elif selected_type=="No Medio Ambiente":
+                check = not i["check"]
+            if check and (start <= datetime.fromisoformat(i["date"]) <= end):
+                lp.append(i)
         for p in lp:
             index_day = get_date_number(p["date"])
             ma_ydays[index_day] += 1
@@ -601,9 +622,62 @@ with st.container(border=True):
         )
 
         st.plotly_chart(fig, use_container_width=True)
+        
+with st.container(border=True):
+    st.markdown("**Distribución de los videos por días del período**")
+    s_key = st.selectbox(
+        "Seleciona el telecentro a analizar:",
+        list(tc.keys()),
+        key="period_select",
+    )
+    if s_key:
+        dates = []
+        for d in data[tc[s_key]]:
+            dates.append(d["date"])
+        dates.sort()
+        start_date = datetime.fromisoformat(dates[0])
+        end_date = datetime.fromisoformat(dates[-1])
+        selected_date_range = st.slider(
+            "Selecciona el rango de fechas:",
+            min_value=start_date,
+            max_value=end_date,
+            value=(start_date, end_date),
+            step=timedelta(days=1),
+            format="YYYY-MM-DD",
+            key="period_slider",
+        )
+        start = selected_date_range[0]
+        end = selected_date_range[-1]
+        # ma_ydays = {i: 0 for i in range(1, 367)}
+        ma_ydays = {get_period_date((start + timedelta(days=x)).isoformat()):0 for x in range((end - start).days + 1)}
+        
+        d = data[tc[s_key]]
+        lp = []
+        for i in d:
+            if i["check"] and (start <= datetime.fromisoformat(i["date"]) <= end):
+                lp.append(i)
+        for p in lp:
+            index_day = get_period_date(p["date"])
+            ma_ydays[index_day] += 1
+        fig = go.Figure()
+        ydays = []
+        ndays = []
+        for key, num in ma_ydays.items():
+            ydays.append(key)
+            ndays.append(num)
+
+        fig.add_trace(go.Bar(x=ydays, y=ndays))
+
+        fig.update_layout(
+            barmode="group",
+            xaxis_title="Día",
+            yaxis_title="Número de programas",
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
 
 with st.container(border=True):
-    st.markdown("**Videos relativos a la celebración de un Día especial**")
+    st.markdown("**Videos de MA relativos a la celebración de un Día especial**")
     selected_keys = st.multiselect(
         "Seleciona los telecentros a analizar:",
         list(tc.keys()),
