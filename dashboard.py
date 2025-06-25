@@ -202,7 +202,7 @@ with st.container(border=True):
         fig.update_layout(
             barmode="stack",
             xaxis_title="Telecentros",
-            yaxis_title="Programas en " + selected_type.lower(),
+            yaxis_title="Videos en " + selected_type.lower(),
         )
 
         st.plotly_chart(fig, use_container_width=True)
@@ -556,7 +556,7 @@ with st.container(border=True):
         fig.update_layout(
             barmode="stack",
             xaxis_title="Día de la Semana",
-            yaxis_title="Número de programas",
+            yaxis_title="Número de videos",
         )
 
         st.plotly_chart(fig, use_container_width=True)
@@ -618,7 +618,7 @@ with st.container(border=True):
         fig.update_layout(
             barmode="group",
             xaxis_title="Día del año",
-            yaxis_title="Número de programas",
+            yaxis_title="Número de videos",
         )
 
         st.plotly_chart(fig, use_container_width=True)
@@ -671,7 +671,7 @@ with st.container(border=True):
         fig.update_layout(
             barmode="group",
             xaxis_title="Día",
-            yaxis_title="Número de programas",
+            yaxis_title="Número de videos",
         )
 
         st.plotly_chart(fig, use_container_width=True)
@@ -753,7 +753,7 @@ with st.container(border=True):
             fig.update_layout(
                 barmode="stack",
                 xaxis_title="Telecentros",
-                yaxis_title="Programas (" + selected_type + ")",
+                yaxis_title="Videos (" + selected_type + ")",
             )
 
             st.plotly_chart(fig, use_container_width=True)
