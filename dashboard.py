@@ -652,9 +652,19 @@ with st.container(border=True):
         ma_ydays = {get_period_date((start + timedelta(days=x)).isoformat()):0 for x in range((end - start).days + 1)}
         
         d = data[tc[s_key]]
+        selected_type = st.selectbox(
+            "Selecciona cual tipo de video mostrar:",
+            list(["Medio Ambiente", "No Medio Ambiente", "Todos"]),
+            key="period_type_select",
+        )
         lp = []
         for i in d:
-            if i["check"] and (start <= datetime.fromisoformat(i["date"]) <= end):
+            check = True
+            if selected_type=="Medio Ambiente":
+                check = i["check"]
+            elif selected_type=="No Medio Ambiente":
+                check = not i["check"]
+            if check and (start <= datetime.fromisoformat(i["date"]) <= end):
                 lp.append(i)
         for p in lp:
             index_day = get_period_date(p["date"])
