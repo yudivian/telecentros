@@ -118,7 +118,7 @@ with st.container(border=True):
         mindur = min(dur)
         maxdur = max(dur)
         dur_range = st.slider(
-            "Selecciona el rango de visualizaciones:",
+            "Selecciona el rango de duración:",
             min_value=mindur,
             max_value=maxdur,
             value=(mindur, maxdur),

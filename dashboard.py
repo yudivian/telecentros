@@ -127,9 +127,11 @@ def get_number_date(numday):
     date = jan1 + timedelta(days=numday - 2)
     return str(date.day) + "/" + str(date.month)
 
+
 def get_period_date(strdate):
     date = datetime.fromisoformat(strdate)
-    return str(date.day) + "/" + str(date.month)+"/"+str(date.year)
+    return str(date.day) + "/" + str(date.month) + "/" + str(date.year)
+
 
 with st.container(border=True):
     st.markdown("**Número de videos**")
@@ -523,9 +525,9 @@ with st.container(border=True):
             lp = []
             for i in d:
                 check = True
-                if selected_type=="Medio Ambiente":
+                if selected_type == "Medio Ambiente":
                     check = i["check"]
-                elif selected_type=="No Medio Ambiente":
+                elif selected_type == "No Medio Ambiente":
                     check = not i["check"]
                 if check and (start <= datetime.fromisoformat(i["date"]) <= end):
                     lp.append(i)
@@ -596,9 +598,9 @@ with st.container(border=True):
         lp = []
         for i in d:
             check = True
-            if selected_type=="Medio Ambiente":
+            if selected_type == "Medio Ambiente":
                 check = i["check"]
-            elif selected_type=="No Medio Ambiente":
+            elif selected_type == "No Medio Ambiente":
                 check = not i["check"]
             if check and (start <= datetime.fromisoformat(i["date"]) <= end):
                 lp.append(i)
@@ -622,7 +624,7 @@ with st.container(border=True):
         )
 
         st.plotly_chart(fig, use_container_width=True)
-        
+
 with st.container(border=True):
     st.markdown("**Distribución de los videos por días del período**")
     s_key = st.selectbox(
@@ -649,8 +651,12 @@ with st.container(border=True):
         start = selected_date_range[0]
         end = selected_date_range[-1]
         # ma_ydays = {i: 0 for i in range(1, 367)}
-        ma_ydays = {get_period_date((start + timedelta(days=x)).isoformat()):0 for x in range((end - start).days + 1)}
-        
+        ma_ydays = {
+            get_period_date((start + timedelta(days=x)).isoformat()): 0
+            for x in range((end - start).days + 2)
+        }
+
+
         d = data[tc[s_key]]
         selected_type = st.selectbox(
             "Selecciona cual tipo de video mostrar:",
@@ -660,9 +666,9 @@ with st.container(border=True):
         lp = []
         for i in d:
             check = True
-            if selected_type=="Medio Ambiente":
+            if selected_type == "Medio Ambiente":
                 check = i["check"]
-            elif selected_type=="No Medio Ambiente":
+            elif selected_type == "No Medio Ambiente":
                 check = not i["check"]
             if check and (start <= datetime.fromisoformat(i["date"]) <= end):
                 lp.append(i)
@@ -675,6 +681,7 @@ with st.container(border=True):
         for key, num in ma_ydays.items():
             ydays.append(key)
             ndays.append(num)
+
 
         fig.add_trace(go.Bar(x=ydays, y=ndays))
 
@@ -803,7 +810,7 @@ with st.container(border=True):
         )
         s_type = st.selectbox(
             "Seleciona el texto a usar:",
-            ["Título + Texto", "Título", "Texto"],
+            ["Título + Lead + Texto", "Título", "Título + Lead", "Texto"],
             key="wc_type select",
         )
         d = data[tc[s_key]]
@@ -815,11 +822,14 @@ with st.container(border=True):
         text = " "
         for p in lp:
             title = p["title"]
+            snippet = p["snippet"]
             trans = ""
             if "transcript" in p:
                 trans = p["transcript"] if p["transcript"] != None else ""
-            if s_type == "Título + Texto":
-                text += title + " " + trans + " "
+            if s_type == "Título + Lead + Texto":
+                text += title + " " +snippet+" "+ trans + " "
+            elif s_type == "Título + Lead":
+                text += title + " "+snippet+ " "
             elif s_type == "Título":
                 text += title + " "
             else:
